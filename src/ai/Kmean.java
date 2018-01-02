@@ -31,17 +31,22 @@ public class Kmean {
 		this.data = data;
 	}
 	
-	public double[][] cluster() {
+	public double[][][] cluster() {
+		System.out.println("===========================");
+		System.out.println("||    K-Mean Algorithm   ||");
+		System.out.println("===========================\n");
+		
 		double[][] centroids = initialCentroids();
-		double[][] newCentroids = new double[k][data[0].length];
-		while(centroids != newCentroids) {
+		double[][] lastCentroids = new double[k][data[0].length];
+		double[][][] result = null;
+ 		while(!Arrays.deepEquals(centroids, lastCentroids)) {
+			lastCentroids = centroids;
 			double[][] distances = computeDistance(data, centroids);
 			double[][] groupClosest = getClosestCentroid(distances);
 			centroids = getNewCentroid(groupClosest);
+			result = groupResult(groupClosest);
 		}
-		
-		
-		return null;
+		return result;
 	}
 	
 	private double[][] initialCentroids() {
@@ -53,6 +58,7 @@ public class Kmean {
 			}
 		}
 		printCentroids(centroids);
+		System.out.println("\n");
 		return centroids;
 	}
 	
@@ -134,6 +140,36 @@ public class Kmean {
 		return newCentroid;
 	}
 	
+	private double[][][] groupResult(double[][] groupClosest) {
+		System.out.println("=====Group Result=====");
+		int[] count = new int[groupClosest.length];
+		for(int i=0; i < groupClosest.length; i++) {
+			for(int j=0; j < groupClosest[i].length; j++) {
+				if(groupClosest[i][j] == 1) {
+					count[i] += 1;
+				}
+			}
+		}
+		double[][][] result = null;
+		for(int i=0; i < groupClosest.length; i++) {
+			result = new double[k][count[i]][data[0].length];
+		}
+		for(int i=0; i < groupClosest.length; i++) {
+			int n = 0;
+			double[][] temp = new double[count[i]][data[0].length];
+			for(int j=0; j < groupClosest[i].length; j++) {
+				if(groupClosest[i][j] == 1) {
+					temp[n] = data[j];
+					n++;
+				}
+			}
+			result[i] = temp;
+		}
+		printCluster(result);
+		System.out.println("\n");
+		return result;
+	}
+	
 	public static double round(double value, int places) {
 	    if (places < 0) throw new IllegalArgumentException();
 	    return new BigDecimal(value).setScale(places, RoundingMode.HALF_UP).doubleValue();
@@ -145,20 +181,28 @@ public class Kmean {
 			for(int j=0; j < centroids[0].length; j++) {
 				System.out.print(centroids[i][j]);
 				if(j != centroids[0].length -1) {
-					System.out.print(",");
+					System.out.print(", ");
 				}
 			}
 			System.out.println(")");
 		}
 	}
 	
+	public void printCluster(double[][][] result) {
+		for(int i=0; i < result.length; i++) {
+			System.out.println("Cluster " + (i+1) + ": " + Arrays.deepToString(result[i]));
+		}
+	}
+	
 	public static void main(String[] args) {
-		
 		int k = 2;
 		double data[][] = { {1,1}, {2,1}, {4,3}, {5,4} };
-		
 		Kmean kmean = new Kmean(k, data);
-		kmean.cluster();
+		double[][][] result = kmean.cluster();
+		System.out.println("===========================");
+		System.out.println("||     Cluster Result     ||");
+		System.out.println("===========================");
+		kmean.printCluster(result);
 	}
 	
 }
