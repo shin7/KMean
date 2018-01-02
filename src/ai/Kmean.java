@@ -21,12 +21,12 @@ import java.util.Arrays;
  * =======================================================
  * 
  */
-public class Kmean {
+public class KMean {
 	
 	private int k;
 	private double data[][];
 	
-	public Kmean(int k, double data[][]) {
+	public KMean(int k, double data[][]) {
 		this.k = k;
 		this.data = data;
 	}
@@ -197,7 +197,7 @@ public class Kmean {
 	public static void main(String[] args) {
 		int k = 2;
 		double data[][] = { {1,1}, {2,1}, {4,3}, {5,4} };
-		Kmean kmean = new Kmean(k, data);
+		KMean kmean = new KMean(k, data);
 		double[][][] result = kmean.cluster();
 		System.out.println("===========================");
 		System.out.println("||     Cluster Result     ||");
